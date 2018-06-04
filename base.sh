@@ -50,8 +50,8 @@ cat << EOF > /etc/alces-imageware.yaml
 EOF
 
 #Lock/scramble root password
-dd if=/dev/urandom count=50|md5sum|passwd --stdin root
-passwd -l root
+#dd if=/dev/urandom count=50|md5sum|passwd --stdin root
+#passwd -l root
 
 #switch to iptables rather than default firewalld for clusterware native support
 yum install -y iptables-services iptables-utils
