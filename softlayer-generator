@@ -1,0 +1,110 @@
+#!/bin/bash
+#==============================================================================
+# Copyright (C) 2016 Stephen F. Norledge and Alces Software Ltd.
+#
+# This file/package is part of Alces Clusterware.
+#
+# Alces Clusterware is free software: you can redistribute it and/or
+# modify it under the terms of the GNU Affero General Public License
+# as published by the Free Software Foundation, either version 3 of
+# the License, or (at your option) any later version.
+#
+# Alces Clusterware is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this package.  If not, see <http://www.gnu.org/licenses/>.
+#
+# For more information on the Alces Clusterware, please visit:
+# https://github.com/alces-software/clusterware
+#==============================================================================
+setup() {
+    local a xdg_config
+    IFS=: read -a xdg_config <<< "${XDG_CONFIG_HOME:-$HOME/.config}:${XDG_CONFIG_DIRS:-/etc/xdg}"
+    for a in "${xdg_config[@]}"; do
+        if [ -e "${a}"/clusterware/config.rc ]; then
+            source "${a}"/clusterware/config.rc
+            break
+        fi
+    done
+    if [ -z "${cw_ROOT}" ]; then
+        echo "$0: unable to locate clusterware configuration"
+        exit 1
+    fi
+    kernel_load
+}
+
+main() {
+    local event instance_id role machine_type instance_tag cluster_tag label
+    event="$1"
+    system_id=$2
+    role=$3
+    system_type=$4
+    desc=$5
+
+    case $event in
+        join)
+            if [ "${system_id}" == "$(network_get_iface_mac $(network_get_first_iface))" ]; then
+                # session start
+                extras="sc=start"
+            fi
+            event="Join-${role}"
+            ;;
+        ping)
+            event="Ping"
+            system_id="$(network_get_iface_mac $(network_get_first_iface))"
+            machine_type="$(dmidecode -s "system-product-name" | tail -n1 | tr ' ' '_')/$(dmidecode -s "processor-version" | tail -n1 | tr ' ' '_')"
+            ;;
+        leave)
+            if [ "${system_id}" == "$(network_get_iface_mac $(network_get_first_iface))" ]; then
+                # session end
+                extras="sc=end"
+            fi
+            event="Leave-${role}"
+            ;;
+        *)
+            event="Event-${event}-${role}"
+            ;;
+    esac
+
+    instance_tag=$(echo "${system_id}" | md5sum | cut -c1-8)
+    cluster_tag=$(echo "${cw_CLUSTER_uuid}" | md5sum | cut -c1-8)
+    label="${machine_type},%20${instance_tag},%20${cluster_tag}"
+    if [ "${desc}" ]; then
+        label="${desc},%20${label}"
+    fi
+
+    if [ ! -f "${cw_ROOT}/etc/user.rc" ]; then
+        if grep 'Account' /root/.ssh/authorized_keys > /root/.ssh/account.pub; then
+            echo "cw_USER_id=\"$(ssh-keygen -lf /root/.ssh/account.pub | cut -f2 -d' ' | tr -d ':')\"" > "${cw_ROOT}"/etc/user.rc
+        else
+            echo "cw_USER_id=$(uuidgen)" > "${cw_ROOT}"/etc/user.rc
+        fi
+    fi
+    files_load_config user
+
+    cat <<EOF
+v=1&tid=${_FLIGHT_RECORDER_id}&aip=1&ds=app&t=event&\
+ec=Lifecycle&ea=${event}&el=${label}&\
+cd1=${machine_type}&\
+an=Alces%20Flight%20Compute&av=${cw_RELEASE}&\
+cid=${cw_CLUSTER_uuid}&uid=${cw_USER_id}&\
+${extras}
+EOF
+}
+
+setup
+
+require action
+require files
+require network
+
+files_load_config config config/cluster
+files_load_config instance config/cluster
+files_load_config clusterware
+
+_FLIGHT_RECORDER_id="UA-29442314-9"
+
+main "$@"
