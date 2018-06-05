@@ -89,38 +89,42 @@ chmod -R g+rw /opt/apps
 #EOF
 alces handler enable cluster-sge
 
-export uuid="aeb911ed-3b97-431a-b0d3-ddb642f92c22"
-export token="LTekqysJmEoN7kLJ4m40"
-
     cat <<EOF > /opt/clusterware/etc/config.yml
 ---
 cluster:
-  uuid: ${cw_SOFTLAYER_uuid:-$(uuid)}
-  token: ${cw_SOFTLAYER_token:-$(token)}
-  name: ${cw_SOFTLAYER_cluster_name:-cluster}
+EOF
+    if [ "${cw_SOFTLAYER_machine_role}" == "master" ]; then
+    cat <<EOF >> /opt/clusterware/etc/config.yml
+  scheduler:
+    allocation: autodetect
+EOF
+    fi
+    cat <<EOF > /opt/clusterware/etc/config.yml
+  uuid: $(uuid)
+  token: $(token)
+  name: $(cluster)
 EOF
     if [ "${cw_SOFTLAYER_machine_role}" == "master" ]; then
         cat <<EOF >> /opt/clusterware/etc/config.yml
-  role: ${cw_SOFTLAYER_machine_role:-master}
+  role: master
   tags:
-     scheduler_roles: ":master:"
-     storage_roles: ":master:"
-     access_roles: ":master:"
+    scheduler_roles: ":master:"
+    storage_roles: ":master:"
 EOF
     else
         cat <<EOF >> /opt/clusterware/etc/config.yml
   role: slave
-  master: '10.63.18.10'
+  master: $(master)
   tags:
      scheduler_roles: ":compute:"
 EOF
     fi
-    chmod 0640 /opt/clusterware/etc/config.yml
-    systemctl start clusterware-configurator
-fi
+chmod 0640 /opt/clusterware/etc/config.yml
+systemctl start clusterware-configurator
+
 
 # Setup user account
-#useradd -u 1000 alces -G wheel,adm,systemd-journal,gridware
-#su - alces -c uptime
-#cat /root/.ssh/authorized_keys >> /home/alces/.ssh/authorized_keys
-#echo "alces  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
+useradd -u 1000 alces -G wheel,adm,systemd-journal,gridware
+su - alces -c uptime
+cat /root/.ssh/authorized_keys >> /home/alces/.ssh/authorized_keys
+echo "alces  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
