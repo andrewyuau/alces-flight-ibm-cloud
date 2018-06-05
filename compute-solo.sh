@@ -89,8 +89,8 @@ chmod -R g+rw /opt/apps
 #EOF
 alces handler enable cluster-sge
 
-export uuid="test123"
-export token="token123"
+export uuid="aeb911ed-3b97-431a-b0d3-ddb642f92c22"
+export token="LTekqysJmEoN7kLJ4m40"
 
     cat <<EOF > /opt/clusterware/etc/config.yml
 ---
