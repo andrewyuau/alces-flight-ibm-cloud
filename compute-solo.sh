@@ -96,7 +96,7 @@ export token="LTekqysJmEoN7kLJ4m40"
 ---
 cluster:
   uuid: ${cw_SOFTLAYER_uuid:-$(uuid)}
-  token: ${cw_SOFTLAYER_token:-$(uuid)}
+  token: ${cw_SOFTLAYER_token:-$(token)}
   name: ${cw_SOFTLAYER_cluster_name:-cluster}
 EOF
     if [ "${cw_SOFTLAYER_machine_role}" == "master" ]; then
