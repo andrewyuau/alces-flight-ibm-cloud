@@ -93,18 +93,18 @@ alces handler enable cluster-sge
 ---
 cluster:
 EOF
-    if [ "${cw_SOFTLAYER_machine_role}" == "master" ]; then
+    if [ $machine_role == "master" ]; then
     cat <<EOF >> /opt/clusterware/etc/config.yml
   scheduler:
     allocation: autodetect
 EOF
     fi
     cat <<EOF > /opt/clusterware/etc/config.yml
-  uuid: $(uuid)
-  token: $(token)
-  name: $(cluster)
+  uuid: $uuid
+  token: $token
+  name: $cluster
 EOF
-    if [ "${cw_SOFTLAYER_machine_role}" == "master" ]; then
+    if [ $machine_role == "master" ]; then
         cat <<EOF >> /opt/clusterware/etc/config.yml
   role: master
   tags:
@@ -114,7 +114,7 @@ EOF
     else
         cat <<EOF >> /opt/clusterware/etc/config.yml
   role: slave
-  master: $(master)
+  master: $master
   tags:
      scheduler_roles: ":compute:"
 EOF
