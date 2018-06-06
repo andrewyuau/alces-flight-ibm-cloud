@@ -23,10 +23,8 @@ mkdir -p /root/provisioners
 cd /root/provisioners
 
 echo uuid > test.txt
-echo $(uuid) >> test.txt
-echo token >> test.txt
-echo $(token) >> test.txt
-echo cluster >> test.txt
-echo $(cluster) >> test.txt
-echo uuid2 >> test.txt
 echo $uuid >> test.txt
+echo token >> test.txt
+echo $token >> test.txt
+echo cluster >> test.txt
+echo $cluster >> test.txt
