@@ -89,7 +89,7 @@ chmod -R g+rw /opt/apps
 #EOF
 alces handler enable cluster-sge
 
-    cat <<EOF > /opt/clusterware/etc/config.yml
+cat <<EOF > /opt/clusterware/etc/config.yml
 ---
 cluster:
 EOF
@@ -99,7 +99,7 @@ EOF
     allocation: autodetect
 EOF
     fi
-    cat <<EOF > /opt/clusterware/etc/config.yml
+    cat <<EOF >> /opt/clusterware/etc/config.yml
   uuid: $uuid
   token: $token
   name: $cluster
