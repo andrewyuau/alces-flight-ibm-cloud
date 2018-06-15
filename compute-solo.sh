@@ -87,7 +87,8 @@ chmod -R g+rw /opt/apps
 #  cw_CLUSTER_NFS_exports="${cw_CLUSTER_NFS_exports} /opt/apps"
 #fi
 #EOF
-alces handler enable cluster-sge
+#alces handler enable cluster-sge
+alces handler enable cluster-pbspro
 
 cat <<EOF > /opt/clusterware/etc/config.yml
 ---
