@@ -36,8 +36,8 @@ cat << 'EOF' > /etc/hosts
 ::1 localhost6.localdomain6 localhost6
 EOF
 
-yum -y groupinstall "Development Tools"
-yum -y install nano screen emacs
+#yum -y groupinstall "Development Tools"
+#yum -y install nano screen emacs
 #export cw_DIST=el7
 #export cw_BUILD_source_branch=1.6.1
 #export cw_BUILD_naming_auth="GNjdioBB+c6r2Dkackqt"
@@ -46,7 +46,7 @@ yum -y install nano screen emacs
 #export cw_BUILD_recorder_generator=/tmp/softlayer-generator
 #curl -sL https://s3-eu-west-1.amazonaws.com/alces-flight-softlayer/provisioning/softlayer-generator > /tmp/softlayer-generator
 # curl -sL http://git.io/clusterware-installer | /bin/bash
-curl -sL http://git.io/clusterware-installer | sudo cw_DIST=el7 /bin/bash
+#curl -sL http://git.io/clusterware-installer | sudo cw_DIST=el7 /bin/bash
 source /etc/profile.d/alces-clusterware.sh
 #rm -f /tmp/softlayer-generator
 
@@ -58,16 +58,22 @@ source /etc/profile.d/alces-clusterware.sh
 #EOF
 #sed -i -e 's/cw_GRIDWARE_prefer_binary=false/cw_GRIDWARE_prefer_binary=true/g'     /opt/clusterware/etc/gridware.rc
 PATH=/opt/clusterware/bin:$PATH
-alces handler enable clusterable
-alces handler enable cluster-nfs
-alces handler enable cluster-gridware
-alces handler enable cluster-customizer
-alces handler enable cluster-www
-alces handler enable cluster-vpn
-alces handler enable cluster-appliances
-alces handler enable session-firewall
-alces handler enable cluster-firewall
-alces handler enable taskable
+#alces handler enable clusterable
+#alces handler enable cluster-nfs
+#alces handler enable cluster-gridware
+#alces handler enable cluster-customizer
+#alces handler enable cluster-www
+#alces handler enable cluster-vpn
+#alces handler enable cluster-appliances
+#alces handler enable session-firewall
+#alces handler enable cluster-firewall
+#alces handler enable taskable
+#alces handler enable cluster-pbspro
+#alces gridware init
+#alces gridware depot install benchmark
+#alces gridware depot enable benchmark
+module load apps/imb
+module initadd apps/imb
 #alces session enable gnome
 mkdir -p /opt/apps/etc/modules
 alces module use /opt/apps/etc/modules
@@ -88,7 +94,6 @@ chmod -R g+rw /opt/apps
 #fi
 #EOF
 #alces handler enable cluster-sge
-alces handler enable cluster-pbspro
 
 cat <<EOF > /opt/clusterware/etc/config.yml
 ---
