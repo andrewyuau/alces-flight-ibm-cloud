@@ -72,8 +72,8 @@ PATH=/opt/clusterware/bin:$PATH
 #alces gridware init
 #alces gridware depot install benchmark
 #alces gridware depot enable benchmark
-module load apps/imb
-module initadd apps/imb
+#module load apps/imb
+#module initadd apps/imb
 #alces session enable gnome
 mkdir -p /opt/apps/etc/modules
 alces module use /opt/apps/etc/modules
@@ -130,7 +130,7 @@ systemctl start clusterware-configurator
 
 
 # Setup user account
-useradd -u 1000 alces -G wheel,adm,systemd-journal,gridware
-su - alces -c uptime
-cat /root/.ssh/authorized_keys >> /home/alces/.ssh/authorized_keys
-echo "alces  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
+#useradd -u 1000 alces -G wheel,adm,systemd-journal,gridware
+#su - alces -c uptime
+#cat /root/.ssh/authorized_keys >> /home/alces/.ssh/authorized_keys
+#echo "alces  ALL=(ALL)       NOPASSWD: ALL" >> /etc/sudoers
